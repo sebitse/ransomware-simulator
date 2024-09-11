@@ -1,52 +1,41 @@
 package com.simulator.keymanagement;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.util.HashMap;
+
 
 public class KeyManager {
     private static KeyManager instance;
-    private SecretKey secretKey; // For symmetric algorithms (AES)
-    private KeyPair keyPair;     // For asymmetric algorithms (RSA)
+    private SecretKey secretKey;  // For symmetric algorithms (AES)
+    private KeyPair keyPair;      // For asymmetric algorithms (RSA)
+    private final AlgorithmRegistry algorithmRegistry = new AlgorithmRegistry();
+    private final KeyGeneratorFactory keyGeneratorFactory = new KeyGeneratorFactory();
 
-    // keys size dictionary
-    private HashMap<String, Integer> dictionary;
-
-    private static final int AESKeySize = 256;
-    private static final int RSAKeySize = 2048;
-
-    // private constructor to implement Singleton
     private KeyManager() {}
 
-
     public static synchronized KeyManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new KeyManager();
         }
         return instance;
     }
 
+    // Method to generate a key based on the algorithm
     public void generateKey(String algorithm) throws Exception {
-        switch (algorithm.toUpperCase()) {
-            case "AES":
-                KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-                keyGen.init(AESKeySize);
-                this.secretKey = keyGen.generateKey();
-                break;
+        if (!algorithmRegistry.isSupported(algorithm)) {
+            throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
+        }
 
-            case "RSA":
-                KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
-                keyPairGen.initialize(RSAKeySize);
-                this.keyPair = keyPairGen.generateKeyPair();
-                break;
+        int keySize = algorithmRegistry.getKeySize(algorithm);
+        Object generatedKey = keyGeneratorFactory.generateKey(algorithm, keySize);
 
-            default:
-                throw new IllegalArgumentException("Unsupported algo for moment: " + algorithm);
+        // Store the key appropriately based on the algorithm
+        if (generatedKey instanceof SecretKey) {
+            this.secretKey = (SecretKey) generatedKey;
+        } else if (generatedKey instanceof KeyPair) {
+            this.keyPair = (KeyPair) generatedKey;
         }
     }
-
 
     // Getters area
     public SecretKey getSecretKey() {
@@ -57,5 +46,8 @@ public class KeyManager {
         return keyPair;
     }
 
-
+    // add algorithms to the registry
+    public void addAlgorithm(String algorithm, int keySize) {
+        algorithmRegistry.addAlgorithm(algorithm, keySize);
+    }
 }
