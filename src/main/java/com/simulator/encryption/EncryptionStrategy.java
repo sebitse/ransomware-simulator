@@ -1,9 +1,10 @@
 package com.simulator.encryption;
 
-import javax.crypto.SecretKey;
+
 import java.io.File;
+import java.security.Key;
 
 public interface EncryptionStrategy {
-    void encrypt(File file, SecretKey key) throws Exception;
-    void decrypt(File file, SecretKey key) throws Exception;
+    void encrypt(File file, Key key) throws Exception;
+    void decrypt(File file, Key key) throws Exception;
 }

@@ -1,19 +1,20 @@
 package com.simulator.encryption;
 
-import javax.crypto.SecretKey;
+
 import java.io.File;
+import java.security.Key;
 
 public class AESEncyption implements EncryptionStrategy {
 
     final static String algorithmUsed = "AES";
 
     @Override
-    public void encrypt(File file, SecretKey key) throws Exception {
+    public void encrypt(File file, Key key) throws Exception {
 
     }
 
     @Override
-    public void decrypt(File file, SecretKey key) throws Exception {
+    public void decrypt(File file, Key key) throws Exception {
 
     }
 }
