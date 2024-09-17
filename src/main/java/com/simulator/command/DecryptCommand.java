@@ -1,14 +1,15 @@
 package com.simulator.command;
 
 import com.simulator.fileprocessing.FileProcessor;
+import com.simulator.fileprocessing.ObservableDecryptFileProcessor;
 
 import java.io.File;
 
 public class DecryptCommand implements Command {
-    private final FileProcessor fileProcessor;
+    private final ObservableDecryptFileProcessor fileProcessor;
     private final File file;
 
-    public DecryptCommand(FileProcessor fileProcessor, File file) {
+    public DecryptCommand(ObservableDecryptFileProcessor fileProcessor, File file) {
         this.fileProcessor = fileProcessor;
         this.file = file;
     }
@@ -18,4 +19,11 @@ public class DecryptCommand implements Command {
     public void start() {
         fileProcessor.processFile(file);
     }
+
+    @Override
+    public FileProcessor getFileProcessor() {
+        return fileProcessor;
+    }
+
+
 }
